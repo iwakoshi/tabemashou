@@ -1,0 +1,9 @@
+dependencyResolutionManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'tabemashou-conventions'
+
+include 'java-library'

@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories { // so that external plugins can be resolved in dependencies section
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.2'
+    implementation "io.quarkus:gradle-application-plugin:${quarkusPluginVersion}"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

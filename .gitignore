@@ -1,0 +1,39 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!tabemashou-conventions/java-library/src/main/**/build/
+!tabemashou-conventions/java-library/src/test/**/build/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!tabemashou-conventions/java-library/src/main/**/out/
+!tabemashou-conventions/java-library/src/test/**/out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!tabemashou-conventions/java-library/src/main/**/bin/
+!tabemashou-conventions/java-library/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store

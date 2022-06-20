@@ -1,0 +1,58 @@
+@startuml Tabemashou Context Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
+
+!include FONTAWESOME/user.puml
+!include FONTAWESOME/user_cog.puml
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/envelope.puml
+!include FONTAWESOME/motorcycle.puml
+!include FONTAWESOME/search_location.puml
+!include FONTAWESOME/map_marked.puml
+!include FONTAWESOME/credit_card.puml
+!include MATERIAL/restaurant.puml
+!include MATERIAL/directions_bike.puml
+!include MATERIAL/notifications.puml
+
+LAYOUT_LANDSCAPE()
+
+title Context diagram for Tabemashou
+
+Person(customer, "Customer", "Anyone who orders food", $sprite="user")
+Person(admin, "Admin", "Anyone at Tabemashou who administers the Platform", $sprite="user_cog")
+Person(restaurantManager, "Restaurant Manager", "Anyone who manages the restaurant", $sprite="user")
+Person(chef, "Chef", "Anyone in the restaurant who makes the food", $sprite="user")
+Person(courier, "Courier", "Anyone who wants to deliver food", $sprite="directions_bike")
+Person(externalCourier, "External Courier", "Anyone who works as a delivery person for the restaurant", $sprite="motorcycle")
+
+System(tabemashou, "Tabemashou", "The fictional online food ordering and delivery platform that allows users to order food from a large number of local restaurants and have it delivered by a local courier.", $link="tabemashou-container.puml")
+
+'External Systems
+System_Ext(emailSystem, "Email System", "The email system used to communicate with customers, restaurants and post offices", "envelope")
+System_Ext(postalSystem, "Postal System", "The Post Office System to obtain address information", "search_location")
+System_Ext(googleMap, "Google Maps", "The system used to obtain information about routes", "map_marked")
+System_Ext(paymentSystem, "Payment System", "The system used to process online payments", "credit_card")
+
+'Relationships
+Rel(customer, tabemashou, "Read menus, place an order, pay online, give a tip to deliveryman, make reviews and ratings, manager profile, see the order status, track the order, see the order history, send message to restaurant, subscribe to new offers")
+Rel_Back(customer, tabemashou, "Send order status notifications")
+Rel(chef, tabemashou, "See all the orders, accept or reject an order, answer reviews, mark the order as ready")
+Rel(restaurantManager, tabemashou, "See all the orders, accept or reject an order, answer reviews, mark the order as ready, open and close the restaurant, manager the menu, manage promotions, charge cancellation fees, see the sales reconciliation, see the order history, send message to costumer, see statistics, manager the employees, manager the restaurant profile")
+Rel(courier, tabemashou, "Mark as available or unavailable, get orders to deliver, mark the order as delivered, track your earnings")
+Rel(externalCourier, tabemashou, "Get orders to deliver, mark the order as delivered")
+Rel(admin, tabemashou, "Accept or reject new Restaurant, manager reviews")
+
+Rel(tabemashou, emailSystem, "Send new offers, invoice, financial statements")
+Rel(tabemashou, postalSystem, "Get address information")
+Rel(tabemashou, googleMap, "Get route information, obtain the restaurant location on the map")
+Rel(tabemashou, paymentSystem, "Allow security online payments using credit cards, gift cards, debit cards, and digital wallets")
+Lay_D(emailSystem, tabemashou)
+
+Rel_Back(customer, emailSystem, "Send email to customer")
+Rel_Back(restaurantManager, emailSystem, "Send email to customer")
+Rel_Back(courier, emailSystem, "Send email to customer")
+
+SHOW_LEGEND()
+@enduml

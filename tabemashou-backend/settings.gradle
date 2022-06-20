@@ -1,0 +1,13 @@
+// == Define locations for build logic ==
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+    includeBuild('../tabemashou-conventions')
+}
+
+// == Define the inner structure of this component ==
+rootProject.name = 'tabemashou-backend'
+
+include 'tabemashou-shopping-api'
+include 'tabemashou-kitchen-api'

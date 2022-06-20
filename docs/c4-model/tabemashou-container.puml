@@ -1,0 +1,168 @@
+@startuml Tabemashou Container Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
+!define CLOUDINSIGHT https://raw.githubusercontent.com/plantuml/plantuml-stdlib/master/cloudinsight
+
+!include CLOUDINSIGHT/kafka.puml
+!include FONTAWESOME/user.puml
+!include FONTAWESOME/user_cog.puml
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/envelope.puml
+!include FONTAWESOME/motorcycle.puml
+!include FONTAWESOME/search_location.puml
+!include FONTAWESOME/map_marked.puml
+!include FONTAWESOME/credit_card.puml
+!include DEVICONS2/flutter.puml
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/postgresql.puml
+!include DEVICONS/mongodb.puml
+!include MATERIAL/restaurant.puml
+!include MATERIAL/directions_bike.puml
+!include MATERIAL/notifications.puml
+
+LAYOUT_LANDSCAPE()
+AddElementTag("mobileApp", $fontColor=$ELEMENT_FONT_COLOR, $bgColor=$CONTAINER_BORDER_COLOR, $legendText="Mobile APP")
+AddElementTag("microservice", $fontColor=$ELEMENT_FONT_COLOR, $bgColor="#335DA5", $shape=EightSidedShape(), $legendText="Microservice")
+AddElementTag("db", $fontColor=$ELEMENT_FONT_COLOR, $bgColor=$CONTAINER_BORDER_COLOR, $legendText="Database")
+AddElementTag("topic", $fontColor=$ELEMENT_FONT_COLOR, $bgColor="#555", $legendText="Topic")
+AddElementTag("webSpa", $fontColor=$ELEMENT_FONT_COLOR, $bgColor=$CONTAINER_BORDER_COLOR, $legendText="Single Page Application")
+
+title Container diagram for Tabemashou
+
+'Users
+Person(customer, "Customer", "Anyone who orders food", $sprite="user")
+Person(restaurantManager, "Restaurant Manager", "Anyone who manages the restaurant", $sprite="user")
+Person(admin, "Admin", "Anyone at Tabemashou who administers the Platform", $sprite="user_cog")
+Person(chef, "Chef", "Anyone in the restaurant who makes the food", $sprite="user")
+Person(courier, "Courier", "Anyone who wants to deliver food", $sprite="directions_bike")
+Person(externalCourier, "External Courier", "Anyone who works as a delivery person for the restaurant", $sprite="motorcycle")
+
+'External Systems
+System_Ext(emailSystem, "Email System", "The email system used to communicate with customers, restaurants and couriers", "envelope")
+System_Ext(postalSystem, "Postal System", "The Post Office System to obtain address information", "search_location")
+System_Ext(googleMap, "Google Maps", "The system used to obtain information about routes", "map_marked")
+System_Ext(paymentSystem, "Payment System", "The system used to process online payments", "credit_card")
+
+System_Boundary(tabemashou, "Tabemashou") {
+    Container(customerApp, "Customer App", "Dart, Flutter", "Allow the user to read menus, place an order, pay online, give a tip to deliveryman, make reviews and ratings, manager profile, see the order status, track the order, see the order history, send message to restaurant, subscribe to new offers", $sprite="flutter", $tags="mobileApp")
+    Container(restaurantApp, "Restaurant App", "Dart, Flutter", "Allow the user to see all the orders, accept or reject an order, answer reviews, mark the order as ready, open and close the restaurant, manager the menu, manage promotions, charge cancellation fees, see the sales reconciliation, see the order history, send message to costumer, see statistics, manager the employees, manager the restaurant profile", $sprite="flutter", $tags="mobileApp")
+    Container(courierApp, "Courier App", "Dart, Flutter", "Allow the user to see all the orders, accept or reject an order, answer reviews, mark the order as ready, open and close the restaurant, manager the menu, manage promotions, charge cancellation fees, see the sales reconciliation, see the order history, send message to costumer, see statistics, manager the employees, manager the restaurant profile", $sprite="flutter", $tags="mobileApp")
+    Container(adminSpa, "Administrator Spa", "Typescript, Angular", "Allow the user to manager profile, manager the employees, accept or reject new Restaurants, accept or reject new Couriers", $sprite="angular", $tags="webSpa")
+
+    Container(accountApi, "Account API", "Java, Quarkus", "Allow the user to mark as available or unavailable, get orders to deliver, mark the order as delivered, track your earnings", $sprite="java", $tags="microservice")
+    Container(reviewApi, "Review API", "Java, Quarkus", "Allow the user to make reviews and ratings, answer reviews, manager reviews", $sprite="java", $tags="microservice")
+    Container(catalogApi, "Catalog API", "Java, Quarkus", "Allow the user to read menus, subscribe to new offers, manager the menu, manage promotions", $sprite="java", $tags="microservice")
+    Container(orderApi, "Order API", "Java, Quarkus", "Allow the user to place an order, see the order status, see the order history, see all the orders, accept or reject an order, mark the order as ready", $sprite="java", $tags="microservice")
+    Container(logisticApi, "Logistic API", "Java, Quarkus", "Allow the user to track the order, mark as available or unavailable, get orders to deliver, mark the order as delivered", $sprite="java", $tags="microservice")
+    Container(paymentApi, "Payment API", "Java, Quarkus", "Allow the user to pay online, give a tip to deliveryman, charge cancellation fees", $sprite="java", $tags="microservice")
+    Container(financialApi, "Financial API", "Java, Quarkus", "Allow the user to see the sales reconciliation, track your earnings", $sprite="java", $tags="microservice")
+    Container(restaurantApi, "Restaurant API", "Java, Quarkus", "Allow the user to open and close the restaurant, see statistics, manager business hour", $sprite="java", $tags="microservice")
+    Container(messageApi, "Message API", "Java, Quarkus", "Allow the user to send message to restaurant, send message to costumer, send order status notifications to customer", $sprite="java", $tags="microservice")
+    Container(adminApi, "Administrator API", "Java, Quarkus", "Allow the user to manager profile, manager the employees, accept or reject new Restaurants, accept or reject new Couriers", $sprite="java", $tags="microservice")
+
+    ContainerQueue(catalogQueue, "Catalog Queue", "Kafka", "Syncs menus between databases", $sprite="kafka", $tags="topic")
+    ContainerQueue(orderQueue, "Order Queue", "Kafka", "Send orders events", $sprite="kafka", $tags="topic")
+    ContainerQueue(messageQueue, "Message Queue", "Kafka", "Send message between users", $sprite="kafka", $tags="topic")
+
+    ContainerDb(accountDb, "Account Database", "Postgresql", "Stores user profile information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(catalogWriteDb, "Catalog Database", "Postgresql", "Stores the menus, offers and access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(catalogReadDb, "Catalog Database", "MongoDB", "Stores the menus and offers", $sprite="mongodb", $tags="db")
+    ContainerDb(orderDb, "Order Database", "Postgresql", "Stores orders information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(logisticDb, "Logistic Database", "Postgresql", "Stores logistic information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(financialDb, "Financial Database", "Postgresql", "Stores financial information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(reviewDb, "Review Database", "Postgresql", "Stores reviews information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(paymentDb, "Payment Database", "Postgresql", "Stores payment information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(restaurantDb, "Restaurant Database", "Postgresql", "Stores restaurant information, access logs", $sprite="postgresql", $tags="db")
+    ContainerDb(messageDb, "Message Database", "Postgresql", "Stores message information, access logs", $sprite="postgresql", $tags="db")
+
+    'Relationships
+    Rel(customer, customerApp, "Uses")
+    Rel(restaurantManager, restaurantApp, "Uses")
+    Rel(chef, restaurantApp, "Uses")
+    Rel(courier, courierApp, "Uses")
+    Rel(externalCourier, courierApp, "Uses")
+    Rel(admin, adminSpa, "Uses")
+
+    Rel(customerApp, accountApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, accountApi, "Uses", "sync, json/https")
+    Rel(customerApp, reviewApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, reviewApi, "Uses", "sync, json/https")
+    Rel(customerApp, catalogApi, "Uses", "sync, json/https")
+    Rel(customerApp, orderApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, catalogApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, orderApi, "Uses", "sync, json/https")
+    Rel(customerApp, logisticApi, "Uses", "sync, json/https")
+    Rel(courierApp, logisticApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, financialApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, restaurantApi, "Uses", "sync, json/https")
+    Rel(courierApp, financialApi, "Uses", "sync, json/https")
+    Rel(customerApp, messageApi, "Uses", "sync, json/https")
+    Rel(restaurantApp, messageApi, "Uses", "sync, json/https")
+    Rel(courierApp, messageApi, "Uses", "sync, json/https")
+    Rel(adminSpa, adminApi, "Uses", "sync, json/https")
+
+    Rel(accountApi, accountDb, "Reads/Writes", "sync, JDBC")
+    Rel(reviewApi, reviewDb, "Reads/Writes", "sync, JDBC")
+    Rel(paymentApi, paymentDb, "Reads/Writes", "sync, JDBC")
+    Rel(catalogApi, catalogWriteDb, "Writes", "sync, JDBC")
+    Rel(catalogApi, catalogReadDb, "Reads/Writes", "sync, JDBC")
+    Rel(logisticApi, logisticDb, "Reads/Writes", "sync, JDBC")
+    Rel(orderApi, orderDb, "Reads/Writes", "sync, JDBC")
+    Rel(financialApi, financialDb, "Reads/Writes", "sync, JDBC")
+    Rel(restaurantApi, restaurantDb, "Reads/Writes", "sync, JDBC")
+    Rel(messageApi, messageDb, "Reads/Writes", "sync, JDBC")
+
+    BiRel(messageApi, messageQueue, "Reads/Writes", "sync, Kafka")
+
+    Rel(catalogApi, catalogQueue, "Writes", "sync, Kafka")
+    Rel_Back(catalogApi, catalogQueue, "Writes", "async, Kafka")
+    Rel_Back(financialApi, orderQueue, "Writes", "async, Kafka")
+    Rel(orderApi, orderQueue, "Writes", "sync, Kafka")
+    Rel(orderApi, paymentApi, "Uses", "async, gRPC")
+    Rel_Back(orderApi, paymentApi, "Uses", "sync, gRPC")
+    Rel(adminApi, accountApi, "Uses", "sync, gRPC")
+    Rel(adminApi, reviewApi, "Uses", "sync, gRPC")
+    Rel(adminApi, financialApi, "Uses", "sync, gRPC")
+    Rel(adminApi, messageApi, "Uses", "sync, gRPC")
+
+    Rel(paymentApi, paymentSystem, "Uses", "sync, json/https")
+    Rel(logisticApi, googleMap, "Uses", "sync, json/https")
+    Rel(accountApi, postalSystem, "Uses", "sync, json/https")
+    Rel(accountApi, emailSystem, "Uses", "async, smtp")
+    Rel_Back(customer, emailSystem, "Uses", "async, smtp")
+
+    Lay_Distance(customerApp, accountApi, 1)
+    Lay_Distance(restaurantApp, accountApi, 1)
+    Lay_Distance(customerApp, reviewApi, 1)
+    Lay_Distance(restaurantApp, reviewApi, 1)
+    Lay_Distance(customerApp, catalogApi, 1)
+    Lay_Distance(customerApp, orderApi, 1)
+    Lay_Distance(restaurantApp, catalogApi, 1)
+    Lay_Distance(restaurantApp, orderApi, 1)
+    Lay_Distance(customerApp, logisticApi, 1)
+    Lay_Distance(courierApp, logisticApi, 1)
+    Lay_Distance(restaurantApp, financialApi, 1)
+    Lay_Distance(restaurantApp, restaurantApi, 1)
+    Lay_Distance(courierApp, financialApi, 1)
+    Lay_Distance(customerApp, messageApi, 1)
+    Lay_Distance(restaurantApp, messageApi, 1)
+    Lay_Distance(courierApp, messageApi, 1)
+
+    Lay_Distance(logisticApi, logisticDb, 1)
+    Lay_Distance(financialApi, financialDb, 1)
+    Lay_Distance(accountApi, accountDb, 1)
+    Lay_Distance(reviewApi, reviewDb, 1)
+    Lay_Distance(catalogApi, catalogWriteDb, 1)
+    Lay_Distance(catalogApi, catalogReadDb, 1)
+    Lay_Distance(orderApi, orderDb, 1)
+    Lay_Distance(messageApi, messageDb, 1)
+    Lay_Distance(restaurantApi, restaurantDb, 1)
+}
+
+SHOW_LEGEND()
+@enduml
