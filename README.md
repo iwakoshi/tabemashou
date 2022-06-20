@@ -23,5 +23,8 @@
 - ✔ **C4 Model**: Diagram representation for Context, Containers, Components, and Code.
 
 ## C4 Model
+### Context Diagram
+![Context Diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/iwakoshi/tabemashou/master/docs/c4-model/tabemashou-context.puml)
 
-![C4 Model](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/iwakoshi/tabemashou/master/docs/c4-model/tabemashou-context.puml)
+### Container Diagram
+![Container Diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/iwakoshi/tabemashou/master/docs/c4-model/tabemashou-container.puml)
